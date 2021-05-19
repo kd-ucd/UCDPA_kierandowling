@@ -2,13 +2,16 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from bokeh.io import output_file, show
+from bokeh.plotting import figure, ColumnDataSource
 import geopandas as gpd
 
 #Company data on Fortune 1000 companies.
 #Data was collected for the year end February 2021
 #https://www.kaggle.com/winston56/fortune-500-data-2021
+#gps_data.csv manually generated
 
-# importing the data
+# importing and cleaning the data
 f1000 = pd.read_csv("data/Fortune_1000.csv")
 print(f1000.info())
 print(f1000.isnull().sum())
@@ -38,7 +41,6 @@ index = are_profitable.value_counts().index
 # visualising the revenue of the top 10 most profitable companies
 most_profitable = f1000.sort_values('profit', ascending=False)
 top10_profitable = most_profitable.iloc[:10]
-#print(top10_profitable)
 top10_comp = top10_profitable['company']
 top10_rev = top10_profitable['revenue']
 plt.barh(top10_comp, top10_rev)
@@ -52,6 +54,16 @@ ceo = df.set_index('company')
 for lab, row in ceo.iterrows():
     print(lab + ': ' + row['CEO'])
 
+#interactive visualization
+f1000_df = pd.DataFrame(f1000)
+source = ColumnDataSource(df)
+p = figure(plot_width=500, plot_height=500, x_axis_label='Market Cap', y_axis_label='Revenue')
+p.circle(x='Market Cap', y='revenue', source=source)
+output_file('bokeh.html')
+show(p)
+
+#, x_range=list(f1000_df.sector.unique())
+
 
 # merging dataframe containing top 10 most profitable companies with GPS data for visualisations
 hq_df = pd.DataFrame({ 'company': [	'Berkshire Hathaway',	'Apple',	'Microsoft',	'JPMorgan Chase',	'Alphabet',	'Bank of America',	'Intel',	'Wells Fargo',	'Citigroup',	'Verizon Communications'],
@@ -61,7 +73,6 @@ hq_df = pd.DataFrame({ 'company': [	'Berkshire Hathaway',	'Apple',	'Microsoft',	
 
 top10_with_gps = df.merge(hq_df)
 print(top10_with_gps)
-
 
 
 
