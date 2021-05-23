@@ -10,6 +10,8 @@ import geopandas as gpd
 # Data was collected for the year end February 2021
 # https://www.kaggle.com/winston56/fortune-500-data-2021
 # gps_data.csv manually generated
+# Shape file downloaded from the United States Census Bureau
+#https://www.census.gov/geographies/mapping-files/time-series/geo/carto-boundary-file.html
 
 # importing and cleaning the data
 f1000 = pd.read_csv("data/Fortune_1000.csv")
@@ -23,13 +25,14 @@ avg_rev = round(np.mean(f1000['revenue'])*1000000)
 med_rev = round(np.median(f1000['revenue'])*1000000)
 avg_rev_legible =  '{:,}'.format(avg_rev)
 med_rev_legible =  '{:,}'.format(med_rev)
-print('The average revuene is $' + str(avg_rev_legible) + '  and the median is $' + str(med_rev_legible))
+print('The average revenue is $' + str(avg_rev_legible) + '  and the median is $' + str(med_rev_legible))
 
-# is there a corrolation between company revenue vs employee headcount
+# is there a correlation between company revenue vs employee headcount
 num_emp = f1000['num. of employees']
 rev = f1000['revenue']
 plt.scatter(rev, num_emp, s=10)
 # plt.show()
+# plt.savefig(revenue_emplyoees.png)
 
 
 # how many companies were profitable in 2020
@@ -38,6 +41,8 @@ values = are_profitable.value_counts().values
 index = are_profitable.value_counts().index
 plt.bar(index, values)
 # plt.show()
+# plt.savefig(profitable.png)
+
 
 # visualising the revenue of the top 10 most profitable companies
 most_profitable = f1000.sort_values('profit', ascending=False)
@@ -46,6 +51,7 @@ top10_comp = top10_profitable['company']
 top10_rev = top10_profitable['revenue']
 plt.barh(top10_comp, top10_rev)
 # plt.show()
+# plt.savefig(revenue_top10.png)
 
 
 # looping through data top find the CEOs of the top 10 most profitable companies
@@ -83,6 +89,7 @@ plt.xlabel('Latitude')
 plt.ylabel('Longitude')
 plt.title('Headquarters of the top 10 most profitable companies')
 # plt.show()
+# plt.savefig(top10_GPS.png)
 
 
 # creating a function extract some key information about a specified company
