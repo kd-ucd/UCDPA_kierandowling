@@ -28,20 +28,20 @@ med_rev_legible =  '{:,}'.format(med_rev)
 print('The average revenue is $' + str(avg_rev_legible) + '  and the median is $' + str(med_rev_legible))
 
 # is there a correlation between company revenue vs employee headcount
-num_emp = f1000['num. of employees']
+sector = f1000['sector']
 rev = f1000['revenue']
-plt.scatter(rev, num_emp, s=10)
-# plt.show()
-# plt.savefig(revenue_emplyoees.png)
-
+rev_sector = plt.barh(sector, rev)
+plt.ylabel('Sector')
+plt.xlabel('Revenue ($M)')
+plt.title('Revenue by Sector')
+#plt.show()
 
 # how many companies were profitable in 2020
-are_profitable = (f1000['profit'] > 0)
-values = are_profitable.value_counts().values
-index = are_profitable.value_counts().index
-plt.bar(index, values)
-# plt.show()
-# plt.savefig(profitable.png)
+print(f1000.value_counts(['profitable']))
+profitable = sns.countplot(data=f1000, x='profitable')
+profitable.set_title('Profitable vs Not Profitable Companies')
+profitable.set(xlabel='Profitable', ylabel='Number of companies')
+#plt.show()
 
 
 # visualising the revenue of the top 10 most profitable companies
@@ -50,8 +50,7 @@ top10_profitable = most_profitable.iloc[:10]
 top10_comp = top10_profitable['company']
 top10_rev = top10_profitable['revenue']
 plt.barh(top10_comp, top10_rev)
-# plt.show()
-# plt.savefig(revenue_top10.png)
+#plt.show()
 
 
 # looping through data top find the CEOs of the top 10 most profitable companies
@@ -64,10 +63,10 @@ for lab, row in ceo.iterrows():
 # interactive visualization
 f1000_df = pd.DataFrame(f1000)
 source = ColumnDataSource(df)
-p = figure(plot_width=500, plot_height=500, x_axis_label='Market Cap', y_axis_label='Revenue')
+p = figure(plot_width=500, plot_height=500, x_axis_label='Market Cap', y_axis_label='Revenue', title='Interactive visualisation of Market Cap vs Revenue')
 p.circle(x='Market Cap', y='revenue', source=source)
-# output_file('bokeh.html')
-# show(p)
+output_file('bokeh.html')
+show(p)
 
 # merging dataframe containing top 10 most profitable companies with GPS data for geospatial visualisations
 hq_df = pd.DataFrame({'company': ['Berkshire Hathaway', 'Apple', 'Microsoft', 'JPMorgan Chase', 'Alphabet',
@@ -83,14 +82,12 @@ hq_df = pd.DataFrame({'company': ['Berkshire Hathaway', 'Apple', 'Microsoft', 'J
 top10_with_gps = df.merge(hq_df)
 
 states = gpd.read_file('data/geo/USA_States_Generalized.shp')
-states.plot(figsize=(10, 10), cmap='Dark2')
+states.plot(figsize=(10, 10), cmap='Blues', edgecolor="black")
 pins = sns.scatterplot(data=top10_with_gps, x='HQ_GPS_lng', y='HQ_GPS_lat', hue='company')
 plt.xlabel('Latitude')
 plt.ylabel('Longitude')
 plt.title('Headquarters of the top 10 most profitable companies')
-# plt.show()
-# plt.savefig(top10_GPS.png)
-
+#plt.show()
 
 # creating a function extract some key information about a specified company
 index_df = f1000_df.set_index('company')
